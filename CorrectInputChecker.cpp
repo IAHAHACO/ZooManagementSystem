@@ -25,7 +25,7 @@ void correctInputCheckerForString(std::string& animalStringData) // Анаста
 
         for (int i = 0; i < animalStringData.size(); i++)
         {
-            if (animalStringData[i] != ' ')
+            if (animalStringData[i] != ' ' && animalStringData[i] != '\t')
             {
                 hasAtLeastOneSymbol = true;
                 break;
