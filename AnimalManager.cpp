@@ -1,5 +1,6 @@
 #include <iostream>
-#include <iomanip>
+#include <algorithm>
+#include <array>
 
 #include "AnimalManager.h"
 #include "CorrectInputChecker.h"
@@ -78,16 +79,65 @@ void addNewAnimal(std::vector<Animal>& animals, int& lastAnimalIdentificationNum
     std::cout << "Тварину додано успішно!" << std::endl;
 }
 
+namespace
+{
+    using AnimalTableRow = std::array<std::string, 7>;
+    using AnimalTableWidths = std::array<std::size_t, 7>;
+
+    const AnimalTableRow animalTableHeaders =
+    {
+        "ID", "Кличка", "Вид", "Стать", "Вік", "Вольєр", "Останнє годування"
+    };
+
+    std::size_t utf8CharacterCount(const std::string& text)
+    {
+        std::size_t count = 0;
+        // Українські літери в UTF-8 займають кілька байтів, але один стовпець.
+        for (unsigned char byte : text)
+        {
+            if ((byte & 0xC0) != 0x80)
+            {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    AnimalTableRow animalTableRow(const Animal& animal)
+    {
+        return {std::to_string(animal.animalIdentificationNumber), animal.nameOfAnimal,
+            animal.typeOfAnimal, animal.genderOfAnimal, std::to_string(animal.ageOfAnimal),
+            std::to_string(animal.enclosureID), animal.lastFeeding};
+    }
+
+    void updateAnimalTableWidths(AnimalTableWidths& widths, const AnimalTableRow& row)
+    {
+        for (std::size_t column = 0; column < row.size(); ++column)
+        {
+            widths[column] = std::max(widths[column], utf8CharacterCount(row[column]));
+        }
+    }
+
+    void printAnimalTableRow(const AnimalTableRow& row, const AnimalTableWidths& widths)
+    {
+        std::cout << "|";
+        for (std::size_t column = 0; column < row.size(); ++column)
+        {
+            std::cout << " " << row[column]
+                << std::string(widths[column] - utf8CharacterCount(row[column]), ' ')
+                << " |";
+        }
+        std::cout << std::endl;
+    }
+}
+
 void outputAnimalData(const Animal& animal)    // Анастасьєв
 {
-    std::cout << std::setw(8) << animal.animalIdentificationNumber
-        << std::setw(15) << animal.nameOfAnimal
-        << std::setw(15) << animal.typeOfAnimal
-        << std::setw(15) << animal.genderOfAnimal
-        << std::setw(10) << animal.ageOfAnimal
-        << std::setw(13) << animal.enclosureID
-        << std::setw(22) << animal.lastFeeding
-        << std::endl;
+    const AnimalTableRow row = animalTableRow(animal);
+    AnimalTableWidths widths{};
+    updateAnimalTableWidths(widths, animalTableHeaders);
+    updateAnimalTableWidths(widths, row);
+    printAnimalTableRow(row, widths);
 }
 
 void showAnimalList(const std::vector<Animal>& animals)    // Шимко
@@ -100,18 +150,18 @@ void showAnimalList(const std::vector<Animal>& animals)    // Шимко
 
     std::cout << "===== СПИСОК ТВАРИН =====" << std::endl;
     std::cout << std::endl;
-    std::cout << std::setw(8) << "ID"
-        << std::setw(15) << "Кличка"
-        << std::setw(15) << "Вид"
-        << std::setw(15) << "Стать"
-        << std::setw(10) << "Вік"
-        << std::setw(13) << "Вольєр"
-        << std::setw(22) << "Останнє годування"
-        << std::endl;
-
-    for (int i = 0; i < animals.size(); i++)
+    AnimalTableWidths widths{};
+    updateAnimalTableWidths(widths, animalTableHeaders);
+    // Однакові ширини для заголовка та всіх тварин, без обрізання тексту.
+    for (const Animal& animal : animals)
     {
-        outputAnimalData(animals[i]);
+        updateAnimalTableWidths(widths, animalTableRow(animal));
+    }
+
+    printAnimalTableRow(animalTableHeaders, widths);
+    for (const Animal& animal : animals)
+    {
+        printAnimalTableRow(animalTableRow(animal), widths);
     }
 }
 
