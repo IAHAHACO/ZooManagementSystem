@@ -59,7 +59,7 @@ void addNewAnimal(std::vector<Animal>& animals, int& lastAnimalIdentificationNum
     } while (newAnimalEnclosureID <= 0);
 
     std::cout << "Введіть час останнього годування (DD/MM/YY XX:XX): ";
-    correctInputCheckerForString(lastFeedingTime);
+    correctInputCheckerForDateTime(lastFeedingTime);
 
     lastAnimalIdentificationNumber++;
     newAnimalIdentificationNumber = lastAnimalIdentificationNumber;
@@ -477,7 +477,7 @@ void addVeterinaryExamination(std::vector<Animal>& animals)    // Феоктіс
     std::string veterinaryExaminationResult;
 
     std::cout << "Введіть дату огляду (DD/MM/YY): ";
-    correctInputCheckerForString(lastVeterinarCheck);
+    correctInputCheckerForDateTime(lastVeterinarCheck);
     std::cout << "Введіть результат огляду: ";
     correctInputCheckerForString(veterinaryExaminationResult);
 
