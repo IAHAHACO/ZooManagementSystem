@@ -321,7 +321,7 @@ void editDataOfAnimal(std::vector<Animal>& animals)    // Анастасьєв
         break;
     case 6:
         std::cout << "Введіть дату та час останнього годування (DD/MM/YY XX:XX): ";
-        correctInputCheckerForString(newStringDataOfTheAnimal);
+        correctInputCheckerForDateTime(newStringDataOfTheAnimal);
 
         animal.lastFeeding = newStringDataOfTheAnimal;
 
