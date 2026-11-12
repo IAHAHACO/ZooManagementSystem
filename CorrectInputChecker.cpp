@@ -21,6 +21,13 @@ void correctInputCheckerForString(std::string& animalStringData) // Анаста
     while (true)
     {
         std::getline(std::cin, animalStringData);
+
+        while (!animalStringData.empty() &&
+            (animalStringData[0] == ' ' || animalStringData[0] == '\t'))
+        {
+            animalStringData.erase(0, 1);
+        }
+
         bool hasAtLeastOneSymbol = false;
 
         for (int i = 0; i < animalStringData.size(); i++)
@@ -36,6 +43,7 @@ void correctInputCheckerForString(std::string& animalStringData) // Анаста
         {
             break;
         }
+
         std::cout << "Некоректне значення! Потрібен текст: ";
     }
 }
